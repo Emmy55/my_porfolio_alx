@@ -33,7 +33,6 @@
             <li onclick="location.href='{% url 'home' %}'">PDF</li>
 
 
-            <li onclick="location.href='{% url 'image' %}'" id="image">IMAGE</li>
 
 
         </ul>
@@ -71,6 +70,7 @@
         <style>
             body {
                 overflow: visible;
+                height: 90pc;
             }
     
             /* .container {
@@ -104,13 +104,12 @@
     </head>
 
 
-    <div class="animated result">
+    <!-- <div class="animated result"> -->
+        {% if base64_string %}
+    <img src="{{ base64_string }}" alt="PDF Image">
+{% endif %}
 
-        <!-- {% for image in converted_images %} -->
-        <img src="{{ converted_images.path }}" alt="Image {{ forloop.counter }}">
-        <!-- {% endfor %} -->
-        
-    </div>
+    <!-- </div> -->
 
 
     <script src="{% static 'PTI_app/modern.js' %}"></script>

@@ -42,9 +42,10 @@
 
 <div class="animated result">
 
-    {% for image in converted_images %}
-    <img src="{{ image.path }}" alt="Image {{ forloop.counter }}">
-    {% endfor %}
+    <div class="animated result">
+        <h1>PDF Display</h1>
+    <img src="data:image/png;base64,{{ base64_string }}" alt="PDF Image">
+    </div>
 </div>
 
 

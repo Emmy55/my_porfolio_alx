@@ -1,46 +1,56 @@
 from django.shortcuts import render
-from django.shortcuts import redirect
-from pdf2image import convert_from_bytes
-from django.http import HttpResponse, JsonResponse
-# Create your views here.
+from django.http import HttpResponse
+import tempfile
+import fitz
 
 def home(request):
     return render(request, 'PTI_app/home.html')
 
-import glob
+# def convert_pdf(request):
+#     if request.method == 'POST' and request.FILES['pdf_file']:
+#         pdf_file = request.FILES['pdf_file']
+#         images = []
+
+#         with tempfile.TemporaryDirectory() as temp_dir:
+#             temp_file = tempfile.NamedTemporaryFile(suffix='.pdf', dir=temp_dir, delete=False)
+#             with open(temp_file.name, 'wb') as f:
+#                 for chunk in pdf_file.chunks():
+#                     f.write(chunk)
+
+#             doc = fitz.open(temp_file.name)
+#             for page_num in range(doc.page_count):
+#                 page = doc.load_page(page_num)
+#                 pix = page.get_pixmap()
+#                 image_data = pix.get_image_data(output='png')
+#                 images.append(image_data)
+
+#         return render(request, 'PTI_app/home.html', {'images': images})
+
+#     return HttpResponse("Invalid request")
+
+import base64
 import fitz
-import os
 
-def image(request):
-    if request.method == 'GET' and 'pdff' in request.GET:
-        path = str(request.GET['pdff'])
-        all_files = glob.glob(f"{path}{'.pdf'}")
-        converted_images = []
+def convert_pd(pdf_path):
+    doc = fitz.open(pdf_path)
+    text = ""
+    for page in doc:
+        text += page.get_text()
 
-        # To get better resolution
-        zoom_x = 2.0  # horizontal zoom
-        zoom_y = 2.0  # vertical zoom
-        mat = fitz.Matrix(zoom_x, zoom_y)  # zoom factor 2 in each dimension
+    string = text.encode('ascii')
+    encoded_string = base64.b64encode(string)
+    decoded_string = encoded_string.decode('ascii')
+    
+    return decoded_string
 
-        for filename in all_files:
-            doc = fitz.open(filename)  # open document
-            for page in doc:  # iterate through the pages
-                pix = page.get_pixmap(matrix=mat)  # render page to an image
-                image_path = os.path.join(os.path.media(__file__), 'media', f'page-{page.number}.png')
-                pix.save(image_path)  # store image as a PNG
-                converted_images.append({'path': image_path})
-                print(converted_images)
 
-        return converted_images
-    else:
-        # Handle the case when the request method is not 'POST' or 'pdf_file' is not present
-        return HttpResponse("Input a PDF file please")
+from django.shortcuts import render
 
 def convert_pdf(request):
-    converted_images = image(request)
-    print(converted_images)
-
-    return render(request, 'PTI_app/home.html', {'converted_images': converted_images})
-
-
-
+    pdf_path = request.GET.get('pdff')
+    base64_string = convert_pd(pdf_path)
+    
+    context = {
+        'base64_string': base64_string
+    }
+    return render(request, 'PTI_app/home.html', context)
