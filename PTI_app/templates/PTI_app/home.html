@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF_to_Image</title>
+    <link rel="icon" href="{% static 'PTI_app/logo.png' %}" style="border-radius: 50%;">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="modern.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="{% static 'PTI_app/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'PTI_app/modern.css' %}">
+</head>
+
+<body>
+    <nav>
+
+        <div class="burger">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+
+        <div class="logo" id="nav-logo">
+            <h2 onclick="location.href='{% url 'home' %}'">EMMY<span>DEV</span></h2>
+
+        </div>
+
+        <ul>
+            <li onclick="location.href='{% url 'home' %}'">PDF</li>
+
+
+
+
+        </ul>
+
+
+    </nav>
+
+    {% block content %}
+
+
+
+
+    {% endblock %}
+
+
+
+    <div class="container">
+        <h1 class="animate__animated animate__bounceInLeft">Upload a PDf to convert to Image</h1>
+
+        <div class="animated product">
+            <div class="small_logo">
+
+            </div>
+        <form action="{% url 'home' %}" method="get">
+            {{ error_message }}
+            <label for="myFile" class="custom-file-upload">Choose File</label>
+            <input id="myFile" name="pdff" type="file" value="Upload Pdf" accept=".pdf">
+            <input type="submit">
+        </form>
+        </div>
+    </div>
+
+
+    <head>
+        <style>
+            body {
+                overflow: visible;
+                height: 90pc;
+            }
+    
+            /* .container {
+                display: none;
+            } */
+    
+            .result {
+                box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.183);
+                height: 40pc;
+                border-radius: 20px;
+                position: relative;
+                left: 20%;
+                width: 60%;
+                margin-top: 8pc;
+                background-color: white;
+            }
+    
+            nav ul li:nth-child(1) {
+                font-size: 16px;
+                color: white;
+            }
+    
+            nav ul li:nth-child(2) {
+                position: relative;
+                top: -9px;
+                overflow: hidden;
+                color: rgb(0, 84, 252);
+                font-size: 20px;
+            }
+        </style>
+    </head>
+
+
+    <!-- <div class="animated result"> -->
+        {% if base64_string %}
+    <img src="{{ base64_string }}" alt="PDF Image">
+{% endif %}
+
+    <!-- </div> -->
+
+
+    <script src="{% static 'PTI_app/modern.js' %}"></script>
+
+    <!-- <script>
+        function uploadFile() {
+            var fileInput = document.getElementById("myFile");
+            var file = fileInput.files[0];
+
+            var formData = new FormData();
+            formData.append("file", file);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "{% url 'home' %}", true);
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // File uploaded successfully
+                    document.getElementById("status").textContent = "File uploaded!";
+                }
+            };
+
+            xhr.send(formData);
+
+            // Clear the file input field
+            fileInput.value = null;
+        }
+    </script> -->
+
+    <script src="modern.js"></script>
+
+    <script>
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        var body = document.querySelector('body');
+
+
+
+
+
+
+        btn = document.querySelector(".burger");
+
+        navlist = document.querySelector("ul");
+
+        bod = document.querySelector("#head");
+
+        btn1 = document.querySelector(".burger1");
+
+
+        btn.addEventListener("click", (event) => {
+            btn.innerHTML = btn.innerHTML.includes("fa-xmark")
+                ? `<i class="fa-solid fa-bars"></i>`
+                : `<i class="fa-sharp fa-solid fa-xmark"></i>`;
+            navlist.classList.toggle("clipped").checked;
+            event.stopPropagation();
+
+        });
+    </script>
+    <script src="https://kit.fontawesome.com/9da17deac8.js" crossorigin="anonymous"></script>
+</body>
+
+
+</html>

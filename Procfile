@@ -1,0 +1,1 @@
+web gunicorn Pdf_to_img.wsgi:application --log-file -
