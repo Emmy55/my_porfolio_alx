@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-=j!*@mpxdyr#^t6%!&fca#7jno7!af1iugb*p%yjscz6oq^ott'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','pdftoimag.herokuapp.com', 'project5.emmanuelnkereuwem.com.ng']
 
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['127.0.0.1','pdftoimag.herokuapp.com', 'project5.emmanuelnkereu
 # Application definition
 
 INSTALLED_APPS = [
+    'pdf2image',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -123,17 +124,13 @@ USE_TZ = True
 
 
 
-# Configure the MEDIA_URL and MEDIA_ROOT settings
-MEDIA_URL = '/media/'  # The URL prefix for serving media files
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')  # The absolute filesystem path to the media directory
-
-# ...
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_URL = '/media/'
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"] # new
+# STATICFILES_DIRS = [BASE_DIR / "static"] # new
 STATIC_ROOT = BASE_DIR / "staticfiles" # new
-STATICFILES_STORAGE ="whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATICFILES_STORAGE ="whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 

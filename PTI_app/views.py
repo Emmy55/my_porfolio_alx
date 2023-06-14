@@ -1,56 +1,51 @@
+from django.conf import settings
 from django.shortcuts import render
+import os
+import string
+import zipfile
+import fitz
 from django.http import HttpResponse
-import tempfile
-import fitz
-
-def home(request):
-    return render(request, 'PTI_app/home.html')
-
-# def convert_pdf(request):
-#     if request.method == 'POST' and request.FILES['pdf_file']:
-#         pdf_file = request.FILES['pdf_file']
-#         images = []
-
-#         with tempfile.TemporaryDirectory() as temp_dir:
-#             temp_file = tempfile.NamedTemporaryFile(suffix='.pdf', dir=temp_dir, delete=False)
-#             with open(temp_file.name, 'wb') as f:
-#                 for chunk in pdf_file.chunks():
-#                     f.write(chunk)
-
-#             doc = fitz.open(temp_file.name)
-#             for page_num in range(doc.page_count):
-#                 page = doc.load_page(page_num)
-#                 pix = page.get_pixmap()
-#                 image_data = pix.get_image_data(output='png')
-#                 images.append(image_data)
-
-#         return render(request, 'PTI_app/home.html', {'images': images})
-
-#     return HttpResponse("Invalid request")
-
-import base64
-import fitz
-
-def convert_pd(pdf_path):
-    doc = fitz.open(pdf_path)
-    text = ""
-    for page in doc:
-        text += page.get_text()
-
-    string = text.encode('ascii')
-    encoded_string = base64.b64encode(string)
-    decoded_string = encoded_string.decode('ascii')
-    
-    return decoded_string
+from .models import PDFFile
 
 
-from django.shortcuts import render
+def sanitize_filename(filename):
+    valid_chars = f"-_.() {string.ascii_letters}{string.digits}"
+    sanitized_filename = ''.join(c if c in valid_chars else '_' for c in filename)
+    return sanitized_filename
 
-def convert_pdf(request):
-    pdf_path = request.GET.get('pdff')
-    base64_string = convert_pd(pdf_path)
-    
-    context = {
-        'base64_string': base64_string
-    }
-    return render(request, 'PTI_app/home.html', context)
+
+def upload_pdf(request):
+    if request.method == 'POST':
+        pdf_file = request.FILES['pdf_file']
+
+        # Generate a unique output folder name
+        output_folder = sanitize_filename(pdf_file.name)  # Sanitize the filename for folder creation
+
+        # Define the output path
+        output_path = os.path.join(settings.MEDIA_ROOT, 'pdf_images', output_folder)
+        os.makedirs(output_path, exist_ok=True)  # Create directory if it doesn't exist
+
+        # Save the PDF file
+        pdf_path = os.path.join(output_path, f'{output_folder}.pdf')
+        with open(pdf_path, 'wb') as f:
+            for chunk in pdf_file.chunks():
+                f.write(chunk)
+
+        # Convert PDF to images
+        doc = fitz.open(pdf_path)
+        images = []
+        for i in range(doc.page_count):
+            page = doc.load_page(i)
+            pix = page.get_pixmap()
+            image_path = os.path.join(output_path, f'page_{i + 1}.jpeg')
+            pix.save(image_path)
+            images.append(os.path.join(settings.MEDIA_URL, 'pdf_images', output_folder, f'page_{i + 1}.jpeg'))
+
+        # Create a new PDFFile instance
+        pdf_file_obj = PDFFile(pdf_file=pdf_file)
+        pdf_file_obj.save()
+
+        return render(request, 'PTI_app/image.html', {'image_files': images})
+
+    elif request.method == 'GET':
+        return render(request, 'PTI_app/home.html')

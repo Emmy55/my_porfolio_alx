@@ -25,12 +25,12 @@
         </div>
 
         <div class="logo" id="nav-logo">
-            <h2 onclick="location.href='{% url 'home' %}'">EMMY<span>DEV</span></h2>
+            <h2 onclick="location.href='{% url 'convert_pdf' %}'">EMMY<span>DEV</span></h2>
 
         </div>
 
         <ul>
-            <li onclick="location.href='{% url 'home' %}'">PDF</li>
+            <li onclick="location.href='{% url 'convert_pdf' %}'">PDF</li>
 
 
 
@@ -50,23 +50,25 @@
 
 
     <div class="container">
-        <h1 class="animate__animated animate__bounceInLeft">Upload a PDf to convert to Image</h1>
+        <h1 class="animate__animated animate__bounceInLeft">Upload a PDF to convert to Image</h1>
 
         <div class="animated product">
             <div class="small_logo">
-
+                <img src="{% static 'PTI_app/thumbnail.jpg' %}" alt="">
             </div>
-        <form action="{% url 'home' %}" method="get">
-            {{ error_message }}
+            <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <label for="myFile" class="custom-file-upload">Choose File</label>
-            <input id="myFile" name="pdff" type="file" value="Upload Pdf" accept=".pdf">
-            <input type="submit">
+            <input id="myFile" type="file" name="pdf_file" accept="application/pdf" required>
+
+            <!-- <input id="myFile" type="file" value="Upload Pdf"  accept="application/pdf" required name="pdf_file"> -->
+            <input type="submit" value="Convert">
         </form>
         </div>
     </div>
 
 
-    <head>
+    <!-- <head>
         <style>
             body {
                 overflow: visible;
@@ -101,43 +103,42 @@
                 font-size: 20px;
             }
         </style>
-    </head>
+    </head> -->
 
 
+      <!-- {% if images %} -->
     <!-- <div class="animated result"> -->
-        {% if base64_string %}
-    <img src="{{ base64_string }}" alt="PDF Image">
-{% endif %}
 
+        <!-- {% for image in images %}
+            <img src="{{ image.url }}" alt="IMAGE">
+        {% endfor %} -->
     <!-- </div> -->
+
+    <!-- {% else %} -->
+    <!-- <div class="animated result">
+
+        <p>No images to display.</p>
+    </div> -->
+
+    <!-- {% endif %} -->
+
+    <footer>
+        <div class="d-flex justify-content-center mb-4">
+            <a class="btn btn-outline-primary btn-square mr-2" href="https://www.twitter.com/Emmy5055"><i
+                    class="fab fa-twitter"></i></a>
+            <!-- <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a> -->
+            <a class="btn btn-outline-primary btn-square mr-2"
+                href="https://www.linkedin.com/in/emmanuel-nkereuwem-348029245/"><i
+                    class="fab fa-linkedin-in"></i></a>
+            <a class="btn btn-outline-primary btn-square" href="https://github.com/Emmy55"><i
+                    class="fab fa-github"></i></a>
+        </div>
+    </footer>
 
 
     <script src="{% static 'PTI_app/modern.js' %}"></script>
 
-    <!-- <script>
-        function uploadFile() {
-            var fileInput = document.getElementById("myFile");
-            var file = fileInput.files[0];
-
-            var formData = new FormData();
-            formData.append("file", file);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "{% url 'home' %}", true);
-
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    // File uploaded successfully
-                    document.getElementById("status").textContent = "File uploaded!";
-                }
-            };
-
-            xhr.send(formData);
-
-            // Clear the file input field
-            fileInput.value = null;
-        }
-    </script> -->
+    
 
     <script src="modern.js"></script>
 
